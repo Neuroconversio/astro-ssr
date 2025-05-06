@@ -4,15 +4,11 @@ import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
 export default defineConfig({
-  site: 'https://www.solarfit.es',
+  site: 'https://www.jouwdomein.com', // vervang dit door je echte domein
   output: 'server',
   integrations: [
     tailwind(),
     sitemap(),
   ],
-  adapter: node({ mode: 'standalone' }),
-  server: {
-    host: '0.0.0.0',
-    port: 4321
-  }
+  adapter: node({ mode: 'standalone' }), // LET OP: adapter moet BUITEN integrations staan
 });

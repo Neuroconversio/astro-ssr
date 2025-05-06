@@ -1,0 +1,9 @@
+export async function fetchStrapi(endpoint: string, lang: string) {
+  const url = `https://cms.solarfit.es/api/${endpoint}?locale=${lang}&populate=deep`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Strapi API error: ${response.status}`);
+  }
+  const json = await response.json();
+  return json.data;
+}

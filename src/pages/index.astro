@@ -1,11 +1,377 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import "../styles/tailwind.css";
+console.log('HOST:', Astro.url.hostname);
+const pageTitle = "SolarTwain V3";
+const pageDescription = "Ontdek hoe je met SolarTwain slimme zonoplossingen toepast in de Costa Blanca. Voor expats en bewoners.";
+const pageUrl = "https://www.jouwdomein.com";
+const pageImage = "https://www.jouwdomein.com/assets/images/og-image.jpg";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// STRAPI DATA OPHALEN (aangepast op basis van subdomein)
+const host = Astro.url.hostname || '';
+console.log('Astro host:', host);
+
+const subdomain = host.split('.')[0];
+const locale = ['de', 'en', 'nl', 'es'].includes(subdomain) ? subdomain : 'es';
+
+console.log('Opgehaalde locale:', locale); // ✅ extra debugregel
+
+let heroTitle = 'Fallback H1';
+
+try {
+  const response = await fetch(`http://154.62.226.183:1337/api/hero-header?locale=${locale}`);
+  const data = await response.json();
+
+  // Als vertaling niet beschikbaar is, fallback op Spaans
+  if (!data?.data?.attributes?.title && locale !== 'es') {
+    const fallbackResponse = await fetch(`http://154.62.226.183:1337/api/hero-header?locale=es`);
+    const fallbackData = await fallbackResponse.json();
+    heroTitle = fallbackData?.data?.attributes?.title ?? 'Fallback H1';
+  } else {
+    heroTitle = data?.data?.attributes?.title ?? 'Fallback H1';
+  }
+} catch (error) {
+  console.error('Fout bij ophalen van Strapi-data:', error);
+}
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={pageImage} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={pageImage} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Libre+Baskerville&family=Merriweather+Sans&family=Poppins&family=Nunito&display=swap" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Alpine.js lokaal -->
+    <script defer src="/js/alpine.js"></script>
+  </head>
+  <body>
+   <header x-data="{ open: false }" data-pg-name="header" class="bg-[#063C4A] pt-[env(safe-area-inset-top)] relative z-40">
+            <!-- Donkerblauwe achtergrond (extra hoogte toegevoegd) -->
+            <div class="flex items-center justify-between px-4 py-8 relative z-10" data-pg-name="TEST">
+                <div class="bg-white pb-3 pt-3 px-4 rounded-sm w-fit">
+                    <img src="assets/logos/Solarfit_logo_wordmark.svg" alt="Solarfit logo" class="h-8 w-auto"/>
+                </div>
+                <button @click="open = !open" class="ml-4 ml-auto mt-1 text-[#ea7600]">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+            <!-- Menu (mobiel) -->
+            <nav x-show="open" x-transition x-cloak class="bg-[#063C4A] px-5 pb-6 space-y-4 text-white">
+                <a href="#" class="block">Home</a>
+                <a href="#" class="block">Over ons</a>
+                <a href="#" class="block">Projecten</a>
+                <a href="#" class="block">Contact</a>
+                <a href="#" class="duration-300 ease-in-out rounded text-white transform transition-all active:bg-blue-700 active:scale-95 active:shadow-inner focus:bg-blue-600 md:hover:bg-blue-700 md:hover:scale-105 md:hover:shadow-xl md:hover:transform font-cta text-xl py-3 px-5 font-medium bg-amber-600 process__cta-button bg-[#ea7600] block mt-4 rounded-sm text-center" data-pg-class-style-inline="bg-[#ea7600] block mt-4 rounded-sm text-center" data-pg-class-style="cta_button">
+      Ontvang jouw offerte </a>
+            </nav>
+        </header>
+        <main>
+            <section data-pg-name="hero" class="overflow-hidden hero" data-pg-class-style="section_stack" data-pg-class-style-inline="hero">
+                <div data-pg-name="hero__content" class="container hero__content mx-auto pb-10 px-4">
+                    <div data-pg-name="hero__main-layout" class="hero__main-layout">
+                        <div data-pg-name="hero__split-layout" class="flex flex-col gap-14 hero__split-layout">
+                            <div data-pg-name="hero__info-content" class="hero__info-content pt-14">
+                                <div data-pg-name="hero__details" class="flex flex-col gap-8 hero__details">
+                                    <div data-pg-name="hero__heading-content" class="hero__heading-content">
+                                        <h1 class="font-semibold hero__heading leading-tight text-sky-900 text-4_5xl font-heading" data-pg-class-style-inline="font-heading" data-pg-class-style="hero_h1_style">{heroTitle}</h1>
+                                    </div>
+                                    <div data-pg-name="hero__text-content" class="hero__text-content">
+                                        <p data-pg-name="hero__text" class="font-light font-subheading hero__text leading-relaxed text-2xl text-sky-950" data-pg-class-style="paragraph_style">Oriëntatie of plannen? Wij geven expats eerlijk advies en een heldere prijs, zonder druk.</p>
+                                    </div>
+                                    <div class="flex flex-col gap-6" data-pg-name="hero__cta-unit" data-pg-class-style="cta_unit">
+                                        <div data-pg-name="hero__disclaimer-content" class="hero__disclaimer-content">
+                                            <p data-pg-name="hero__disclaimer-text" class="text-lg text-sky-950 font-paragraph process__disclaimer-text" data-pg-class-style="disclaimer_text_style">Geen verplichtingen. Wel duidelijkheid.</p>
+                                        </div>
+                                        <div data-pg-name="hero__cta" class="hero__cta">
+                                            <a name="anchor" data-pg-name="hero__cta-button" data-pg-class-style="cta_button" class="duration-300 ease-in-out inline-block rounded text-white transform transition-all active:bg-blue-700 active:scale-95 active:shadow-inner focus:bg-blue-600 md:hover:bg-blue-700 md:hover:scale-105 md:hover:shadow-xl md:hover:transform font-cta text-xl py-3 px-5 font-medium bg-amber-600 process__cta-button hero__cta-button" data-pg-class-style-inline="hero__cta-button">Ontvang jouw offerte</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-pg-name="hero__media" class="hero__media">
+                                <picture data-pg-name="hero__media-content" class="hero__media-content w-full">
+                                    <img src="assets/images/Group%2010.png" data-pg-name="hero__image" class="h-auto hero__image object-cover w-full">
+                                </picture>
+                            </div>
+                        </div>
+                        <div data-pg-name="hero__usp-row" class="flex flex-col hero__usp-row items-stretch mt-12" data-pg-class-style="card_row">
+                            <div class="flex flex-col gap-9 hero__usp-list pb-6" data-pg-name="hero__usp-list" data-pg-class-style="card_stack" data-pg-class-style-inline="hero__usp-list pb-6">
+                                <div data-pg-name="info-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 info-card" data-pg-class-style="card_base" data-pg-class-style-inline="info-card">
+                                    <div data-pg-name="info-card__header" class="info-card__header mb-2">
+                                        <h3 data-pg-name="info-card__heading" title="Binnen elk budget." data-pg-class-style="card_heading_style" class="text-inherit text-2xl tracking-wide info-card__heading" data-pg-class-style-inline="info-card__heading">Binnen elk budget.</h3>
+                                    </div>
+                                    <div data-pg-name="info-card__text-content" class="info-card__text-content mb-2">
+                                        <p data-pg-name="info-card__text" class="leading-snug tracking-wide text-sky-950 text-lg info-card__text" data-pg-class-style-inline="info-card__text" data-pg-class-style="card_text_style">Wij stemmen de installatie af op jouw verbruik én budget.</p>
+                                    </div>
+                                </div>
+                                <div data-pg-name="info-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 info-card" data-pg-class-style="card_base" data-pg-class-style-inline="info-card">
+                                    <div data-pg-name="info-card__header" class="info-card__header mb-2">
+                                        <h3 data-pg-name="info-card__heading" title=" Binnen elk budget." data-pg-class-style="card_heading_style" class="text-inherit text-2xl tracking-wide info-card__heading" data-pg-class-style-inline="info-card__heading">Subsidie? Wij regelen het.</h3>
+                                    </div>
+                                    <div data-pg-name="info-card__text-content" class="info-card__text-content mb-2">
+                                        <p data-pg-name="info-card__text" class="leading-snug tracking-wide text-sky-950 text-lg info-card__text" data-pg-class-style-inline="info-card__text" data-pg-class-style="card_text_style">Wij stemmen de installatie af op jouw verbruik én budget.</p>
+                                    </div>
+                                </div>
+                                <div data-pg-name="info-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 info-card" data-pg-class-style="card_base" data-pg-class-style-inline="info-card">
+                                    <div data-pg-name="info-card__header" class="info-card__header mb-2">
+                                        <h3 data-pg-name="info-card__heading" title=" Binnen elk budget." data-pg-class-style="card_heading_style" class="text-inherit text-2xl tracking-wide info-card__heading" data-pg-class-style-inline="info-card__heading">Vergunningen geregeld.</h3>
+                                    </div>
+                                    <div data-pg-name="info-card__text-content" class="info-card__text-content mb-2">
+                                        <p data-pg-name="info-card__text" class="leading-snug tracking-wide text-sky-950 text-lg info-card__text" data-pg-class-style-inline="info-card__text" data-pg-class-style="card_text_style">Wij stemmen de installatie af op jouw verbruik én budget.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section data-pg-name="lead-magnet" class="overflow-hidden lead-magnet bg-gray-50" data-pg-class-style-inline="lead-magnet bg-gray-50" data-pg-class-style="section_stack">
+                <div data-pg-name="lead-magnet__content" class="container flex flex-col lead-magnet__content mx-auto pb-10 px-4">
+                    <div data-pg-name="lead-magnet__main-layout" class="lead-magnet__main-layout">
+                        <div data-pg-name="lead-magnet__split-layout" class="flex flex-col gap-8 lead-magnet__split-layout">
+                            <div data-pg-name="lead-magnet__question-column" class="order-2 overflow-visible relative" data-pg-class-style="card_column">
+                                <div data-pg-name="lead-magnet__question-list" class="flex flex-col pb-10 gap-9 lead-magnet__question-list" data-pg-class-style-inline="lead-magnet__question-list" data-pg-class-style="card_stack">
+                                    <div data-pg-name="question-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 question-card" data-pg-class-style-inline="question-card" data-pg-class-style="card_base"> 
+                                        <div data-pg-name="question-card__heading-content" class="font-subheading question-card__heading-content"> 
+                                            <h3 data-pg-name="question-card__heading" class="text-inherit text-2xl tracking-wide question-card__heading" data-pg-class-style-inline="question-card__heading" data-pg-class-style="card_heading_style">Goede zonnepanelen?</h3> 
+                                        </div>
+                                        <div data-pg-name="question-card__text-content" class="question-card__text-content"> 
+                                            <p data-pg-name="question-card__text" class="leading-snug tracking-wide text-sky-950 text-lg font-paragraph question-card__text" data-pg-class-style-inline="font-paragraph question-card__text" data-pg-class-style="card_text_style">Betrouwbare merken voor het Spaanse klimaat.</p> 
+                                        </div>                                         
+                                    </div>
+                                    <div data-pg-name="question-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 question-card" data-pg-class-style="card_base" data-pg-class-style-inline="question-card"> 
+                                        <div data-pg-name="question-card__heading-content" class="font-subheading question-card__heading-content"> 
+                                            <h3 data-pg-name="question-card__heading" class="text-inherit text-2xl tracking-wide question-card__heading" data-pg-class-style="card_heading_style" data-pg-class-style-inline="question-card__heading">Is het rendabel voor mij?</h3> 
+                                        </div>
+                                        <div data-pg-name="question-card__text-content" class="question-card__text-content"> 
+                                            <p data-pg-name="question-card__text" class="leading-snug tracking-wide text-sky-950 text-lg question-card__text" data-pg-class-style="card_text_style" data-pg-class-style-inline="question-card__text">Inzicht in besparing op basis van jouw verbruik.</p> 
+                                        </div>                                         
+                                    </div>
+                                    <div data-pg-name="question-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 question-card" data-pg-class-style="card_base" data-pg-class-style-inline="question-card"> 
+                                        <div data-pg-name="question-card__heading-content" class="font-subheading question-card__heading-content"> 
+                                            <h3 data-pg-name="question-card__heading" class="text-inherit text-2xl tracking-wide question-card__heading" data-pg-class-style="card_heading_style" data-pg-class-style-inline="question-card__heading">Kan ik subsidie krijgen?</h3> 
+                                        </div>
+                                        <div data-pg-name="question-card__text-content" class="question-card__text-content"> 
+                                            <p data-pg-name="question-card__text" class="leading-snug tracking-wide text-sky-950 text-lg font-paragraph question-card__text" data-pg-class-style-inline="font-paragraph question-card__text" data-pg-class-style="card_text_style">Kom je in aanmerking? Wij regelen de aanvraag.</p> 
+                                        </div>                                         
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-pg-name="lead-magnet__info-content" class="lead-magnet__info-content mb-10 order-1">
+                                <div data-pg-name="lead-magnet__details" class="lead-magnet__details">
+                                    <div data-pg-name="lead-magnet__heading-content" class="lead-magnet__details mb-9 mt-14">
+                                        <h2 data-pg-name="lead-magnet__heading" data-pg-class-style="heading_h2_style" class="font-semibold text-sky-900 font-heading text-4xl leading-tight process__heading">Gratis zonnepanelen gids – ontdek valkuilen en begin goed.</h2>
+                                    </div>
+                                    <div data-pg-name="lead-magnet__text-content" class="lead-magnet__text-content mb-10">
+                                        <p data-pg-name="lead-magnet__text" class="font-light font-subheading hero__text leading-relaxed text-2xl text-sky-950 lead-magnet__text" data-pg-class-style-inline="lead-magnet__text" data-pg-class-style="paragraph_style">Ontvang praktische inzichten, vermijd veelgemaakte fouten.</p>
+                                    </div>
+                                    <div class="flex flex-col gap-6" data-pg-name="hero__cta-unit" data-pg-class-style="cta_unit">
+                                        <div data-pg-name="hero__disclaimer-content" class="hero__disclaimer-content">
+                                            <p data-pg-name="hero__disclaimer-text" class="text-lg text-sky-950 font-paragraph process__disclaimer-text" data-pg-class-style="disclaimer_text_style">Geen verplichtingen. Wel duidelijkheid.</p>
+                                        </div>
+                                        <div data-pg-name="hero__cta" class="hero__cta">
+                                            <a name="anchor" data-pg-name="hero__cta-button" data-pg-class-style="cta_button" class="duration-300 ease-in-out inline-block rounded text-white transform transition-all active:bg-blue-700 active:scale-95 active:shadow-inner focus:bg-blue-600 md:hover:bg-blue-700 md:hover:scale-105 md:hover:shadow-xl md:hover:transform font-cta text-xl py-3 px-5 font-medium bg-amber-600 process__cta-button hero__cta-button" data-pg-class-style-inline="hero__cta-button">Ontvang direct je gids!</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section data-pg-name="about" class="overflow-hidden about" data-pg-class-style-inline="about" data-pg-class-style="section_stack">
+                <div data-pg-name="about__content" class="about__content container mx-auto pb-10 px-4">
+                    <div data-pg-name="about__main-layout" class="about__main-layout">
+                        <div data-pg-name="about__split-layout" class="about__split-layout flex flex-col gap-16">
+                            <div data-pg-name="about__info-column" class="order-2 overflow-visible relative about__info-column" data-pg-class-style="card_column" data-pg-class-style-inline="about__info-column">
+                                <div data-pg-name="about__info-list" class="flex flex-col pb-10 gap-9 about__info-list" data-pg-class-style="card_stack" data-pg-class-style-inline="about__info-list">
+                                    <div data-pg-name="about-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 about-card" data-pg-class-style="card_base" data-pg-class-style-inline="about-card"> 
+                                        <div data-pg-name="about__heading-content" class="about__heading-content font-subheading"> 
+                                            <h3 data-pg-name="about__heading" class="text-inherit text-2xl tracking-wide about__heading" data-pg-class-style="card_heading_style" data-pg-class-style-inline="about__heading">Waarom Solarfit?</h3> 
+                                        </div>
+                                        <div data-pg-name="about__content" class="about__content"> 
+                                            <div data-pg-name="about__text-content" class="about__text-content"> 
+                                                <p data-pg-name="about__text" class="leading-snug tracking-wide text-sky-950 text-lg font-paragraph about__text" data-pg-class-style-inline="font-paragraph about__text" data-pg-class-style="card_text_style">Van advies tot installatie: wij helpen je persoonlijk.</p> 
+                                            </div>                                             
+                                        </div>                                         
+                                    </div>
+                                    <div data-pg-name="about-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 about-card" data-pg-class-style="card_base" data-pg-class-style-inline="about-card"> 
+                                        <div data-pg-name="about__heading-content" class="about__heading-content font-subheading"> 
+                                            <h3 data-pg-name="about__heading" class="text-inherit text-2xl tracking-wide about__heading" data-pg-class-style="card_heading_style" data-pg-class-style-inline="about__heading">Alles in het Nederlands</h3> 
+                                        </div>
+                                        <div data-pg-name="about__text-content" class="about__text-content"> 
+                                            <p data-pg-name="about__text" class="leading-snug tracking-wide text-sky-950 text-lg about__text" data-pg-class-style="card_text_style" data-pg-class-style-inline="about__text">Duidelijke uitleg, zonder taalgedoe.</p> 
+                                        </div>                                         
+                                    </div>
+                                    <div data-pg-name="about-card" class="border-opacity-0 rounded-md shadow-card w-full bg-white flex flex-col p-8 gap-4 about-card" data-pg-class-style="card_base" data-pg-class-style-inline="about-card"> 
+                                        <div data-pg-name="about__heading-content" class="about__heading-content font-subheading"> 
+                                            <h3 data-pg-name="about__heading" class="text-inherit text-2xl tracking-wide about__heading" data-pg-class-style="card_heading_style" data-pg-class-style-inline="about__heading">Profiteer van subsidies</h3> 
+                                        </div>
+                                        <div data-pg-name="about__text-content" class="about__text-content"> 
+                                            <p data-pg-name="about__text" class="leading-snug tracking-wide text-sky-950 text-lg font-paragraph about__text" data-pg-class-style-inline="font-paragraph about__text" data-pg-class-style="card_text_style">Wij doen de aanvraag om jouw subsidie te toetsen.</p> 
+                                        </div>                                         
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-pg-name="about__info-content" class="about__info-content order-1 pt-14">
+                                <div data-pg-name="about__details" class="about__details">
+                                    <div data-pg-name="about__heading-content" class="about__heading-content mb-9">
+                                        <h2 data-pg-name="about__heading" data-pg-class-style="heading_h2_style" class="font-semibold text-sky-900 font-heading text-4xl leading-tight process__heading">Waarom kiezen voor Solarfit?</h2>
+                                    </div>
+                                    <div data-pg-name="about__text-content" class="about__text-content mb-10">
+                                        <p data-pg-name="about__text" class="font-light font-subheading hero__text leading-relaxed text-2xl text-sky-950 about__text" data-pg-class-style-inline="about__text" data-pg-class-style="paragraph_style">Lokaal zonne-advies en installatie op maat aan de Costa Blanca.</p>
+                                    </div>
+                                    <div class="flex flex-col gap-6" data-pg-name="hero__cta-unit" data-pg-class-style="cta_unit">
+                                        <div data-pg-name="hero__disclaimer-content" class="hero__disclaimer-content">
+                                            <p data-pg-name="hero__disclaimer-text" class="text-lg text-sky-950 font-paragraph process__disclaimer-text" data-pg-class-style="disclaimer_text_style">Geen verplichtingen. Wel duidelijkheid.</p>
+                                        </div>
+                                        <div data-pg-name="hero__cta" class="hero__cta">
+                                            <a name="anchor" data-pg-name="hero__cta-button" data-pg-class-style="cta_button" class="duration-300 ease-in-out inline-block rounded text-white transform transition-all active:bg-blue-700 active:scale-95 active:shadow-inner focus:bg-blue-600 md:hover:bg-blue-700 md:hover:scale-105 md:hover:shadow-xl md:hover:transform font-cta text-xl py-3 px-5 font-medium bg-amber-600 process__cta-button hero__cta-button" data-pg-class-style-inline="hero__cta-button">Ontvang jouw offerte</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section data-pg-name="testimonials" class="overflow-hidden testimonials" data-pg-class-style="section_stack" data-pg-class-style-inline="testimonials">
+                <div data-pg-name="testimonials__content" class="bg-gray-50 container mx-auto px-4 testimonials__content">
+                    <div data-pg-name="testimonials__main-layout" class="testimonials__main-layout">
+                        <div data-pg-name="testimonials__split-layout" class="flex flex-col gap-1 overflow-hidden testimonials__split-layout">
+                            <!-- ✅ MOBILE SLIDER -->
+                            <!-- ✅ HEADER & TEKST -->
+                            <div data-pg-name="testimonials__slider-track" class="flex order-2 overflow-x-auto pb-16 pt-10 px-0 scroll-smooth snap-mandatory snap-x testimonials__slider-track sm:hidden">
+                                <!-- CARD 1 -->
+                                <div class="flex-shrink-0 min-w-[85%] px-4 snap-center snap-start w-full">
+                                    <div class="bg-white p-6 rounded-2xl shadow-card testimonials__card">
+                                        <h3 class="text-xl font-heading font-semibold mb-3">Persoonlijk advies</h3>
+                                        <p class="text-base font-paragraph text-sky-950 mb-4">Alles werd duidelijk uitgelegd, snel geregeld en professioneel geïnstalleerd.</p>
+                                        <img class="mb-3 object-contain" alt="Testimonial 1" src="assets/images/Group%2010.png">
+                                        <p class="text-sm font-semibold">Naam: J. de Vries</p>
+                                        <p class="text-sm text-neutral-600 mb-2">Locatie: Altea la Vella</p>
+                                        <div class="text-xl text-yellow-400">★★★★☆</div>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 min-w-[85%] px-4 snap-center snap-start w-full">
+                                    <div class="bg-white shadow-card rounded-2xl p-6 testimonials__card">
+                                        <h3 class="text-xl font-heading font-semibold mb-3">Persoonlijk advies</h3>
+                                        <p class="text-base font-paragraph text-sky-950 mb-4">Alles werd duidelijk uitgelegd, snel geregeld en professioneel geïnstalleerd.</p>
+                                        <img class="mb-3 object-contain" alt="Testimonial 1" src="assets/images/Group%2010.png">
+                                        <p class="text-sm font-semibold">Naam: J. de Vries</p>
+                                        <p class="text-sm text-neutral-600 mb-2">Locatie: Altea la Vella</p>
+                                        <div class="text-xl text-yellow-400">★★★★☆</div>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 min-w-[85%] px-4 snap-center snap-start w-full">
+                                    <div class="bg-white shadow-card rounded-2xl p-6 testimonials__card">
+                                        <h3 class="text-xl font-heading font-semibold mb-3">Persoonlijk advies</h3>
+                                        <p class="text-base font-paragraph text-sky-950 mb-4">Alles werd duidelijk uitgelegd, snel geregeld en professioneel geïnstalleerd.</p>
+                                        <img class="mb-3 object-contain" alt="Testimonial 1" src="assets/images/Group%2010.png">
+                                        <p class="text-sm font-semibold">Naam: J. de Vries</p>
+                                        <p class="text-sm text-neutral-600 mb-2">Locatie: Altea la Vella</p>
+                                        <div class="text-xl text-yellow-400">★★★★☆</div>
+                                    </div>
+                                </div>
+                                <!-- CARD 2 -->
+                            </div>
+                            <div data-pg-name="testimonials__info-content" class="order-1 pt-14 testimonials__info-content">
+                                <div data-pg-name="testimonials__details" class="testimonials__details">
+                                    <div data-pg-name="testimonials__heading-content" class="mb-9 testimonials__heading-content">
+                                        <h2 data-pg-name="testimonials__heading" data-pg-class-style="heading_h2_style" class="font-semibold text-sky-900 font-heading text-4xl leading-tight process__heading">Zij deden het al. Jij strak ook?</h2>
+                                    </div>
+                                    <div data-pg-name="testimonials__text-content" class="mb-10 testimonials__text-content">
+                                        <p data-pg-name="testimonials__text" class="font-light font-subheading hero__text leading-relaxed text-2xl text-sky-950 testimonials__text" data-pg-class-style-inline="testimonials__text" data-pg-class-style="paragraph_style">Snelle aanpak, helder proces en blijvend resultaat &ndash; zonder verrassingen, in jouw taal.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section data-pg-name="contact" class="contact">
+                <div data-pg-name="contact__content" class="contact__content container mx-auto pb-14 px-4">
+                    <div data-pg-name="contact__main-layout">
+                        <div data-pg-name="contact__split-layout">
+                            <div data-pg-name="contact__info-content" class="pt-14">
+                                <div data-pg-name="contact__heading-content" class="mb-10 text-center contact__heading-content">
+                                    <div data-pg-name="contact__heading" class="mb-9">
+                                        <h2 class="font-semibold text-sky-900 font-heading text-4xl leading-tight process__heading contact__heading mb-4 text-left" data-pg-class-style-inline="contact__heading mb-4 text-left" data-pg-class-style="heading_h2_style">Vraag een vrijblijvend gesprek aan</h2>
+                                    </div>
+                                    <div data-pg-name="contact__text-content">
+                                        <p class="font-light font-subheading hero__text leading-relaxed text-2xl text-sky-950 contact__text text-left" data-pg-class-style-inline="contact__text text-left" data-pg-class-style="paragraph_style">Laat je gegevens achter en we nemen persoonlijk contact met je op.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-pg-name="contact__form">
+                                <form action="/contact" method="POST" class="bg-white contact__form p-6 rounded-xl shadow-lg space-y-6">
+                                    <div>
+                                        <label for="name" class="block text-sm font-medium text-gray-700 contact__label">Naam</label>
+                                        <input type="text" id="name" name="name" required class="mt-1 block w-full h-10 rounded-md border border-gray-300 shadow-sm px-4 focus:ring-amber-500 focus:border-amber-500 contact__input">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700 contact__label">E-mailadres</label>
+                                        <input type="email" id="email" name="email" required class="mt-1 block w-full h-10 rounded-md border border-gray-300 shadow-sm px-4 focus:ring-amber-500 focus:border-amber-500 contact__input">
+                                    </div>
+                                    <div>
+                                        <label for="phone" class="block text-sm font-medium text-gray-700 contact__label">Telefoonnummer</label>
+                                        <input type="tel" id="phone" name="phone" required class="mt-1 block w-full h-10 rounded-md border border-gray-300 shadow-sm px-4 focus:ring-amber-500 focus:border-amber-500 contact__input">
+                                    </div>
+                                    <button type="submit" class="w-full bg-amber-600 text-white font-medium py-3 px-4 rounded-md hover:bg-amber-700 transition contact__button" data-pg-name="contact__cta-button">
+                                        Verstuur
+</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <footer class="bg-sky-900 pb-6 pt-10 px-6 text-sm text-white" data-pg-name="footer">
+            <!-- Logo + bijschrift -->
+            <div class="flex items-center gap-4 mb-6" data-pg-name="footer__media">
+                <img src="assets/logos/Solarfit_logo_wordmark.svg" alt="Solarfit logo" class="bg-white h-8 px-3 py-2 rounded" data-pg-name="footer__media-logo">
+            </div>
+            <!-- Contact -->
+            <div class="space-y-1 mb-8" data-pg-name="footer__label">
+                <p class="opacity-90" data-pg-name="footer__">Bel ons: <span class="font-medium">+34 906 255 580</span></p>
+                <p class="opacity-90">Mail ons: <a href="mailto:info@solarfit.es" class="underline">info@solarfit.es</a></p>
+            </div>
+            <!-- Navigatie -->
+            <nav class="space-y-2 mb-10"><a href="#zonnepanelen" class="block hover:underline">Zonnepanelen</a><a href="#projecten" class="block hover:underline">Projecten</a><a href="#contact" class="block hover:underline">Contact</a>
+            </nav>
+            <!-- Footer info -->
+            <div class="text-xs text-white text-opacity-50" data-pg-name="footer__legal">
+                © 2025 Solarfit. Alle rechten voorbehouden.
+</div>
+        </footer>
+</body>
+</html>

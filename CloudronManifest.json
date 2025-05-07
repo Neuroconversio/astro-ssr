@@ -1,7 +1,6 @@
 {
-  "id": "astro-ssr",
-  "title": "Astro SSR Site",
-  "author": "Hamid Norani",
+  "id": "com.neuroconversio.astro",
+  "title": "Astro SSR",
   "version": "1.0.0",
   "healthCheckPath": "/",
   "httpPort": 80,

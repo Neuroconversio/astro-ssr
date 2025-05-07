@@ -1,0 +1,10 @@
+{
+  "id": "astro-ssr",
+  "title": "Astro SSR Site",
+  "author": "Hamid Norani",
+  "version": "1.0.0",
+  "healthCheckPath": "/",
+  "httpPort": 3000,
+  "addons": [],
+  "manifestVersion": 2
+}

@@ -1,0 +1,27 @@
+name: Build on Cloudron
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Cloudron CLI
+        run: |
+          curl -L https://cloudron.io/releases/cli/cloudron-linux-x64 -o cloudron
+          chmod +x cloudron
+          sudo mv cloudron /usr/local/bin/cloudron
+
+      - name: Login to Cloudron Build Service
+        run: |
+          cloudron build login --url https://builder.neuroconversio.com --build-token 57acee81ae9eef508d51450af86a87a7cf07038e53149cd9
+
+      - name: Build app
+        run: |
+          cloudron build

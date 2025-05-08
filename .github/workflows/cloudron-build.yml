@@ -14,7 +14,7 @@ jobs:
 
       - name: Install Cloudron CLI
         run: |
-          curl -L https://cloudron.io/releases/cli/cloudron-linux-x64 -o cloudron
+          curl -L https://cloudron.io/releases/cloudron-cli/7.6.0/cloudron-linux-x64 -o cloudron
           chmod +x cloudron
           sudo mv cloudron /usr/local/bin/cloudron
 
